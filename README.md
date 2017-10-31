@@ -1,68 +1,171 @@
----
-title: "Wholesale Market Supply Curve"
-output: github_document
----
+<!DOCTYPE html>
 
-##Introduction
-This document presents a guide for R beginners on how to build a supply curve that one might expect to see in the wholesale energy market. This supply curve is purely hypothetical, but can be used as a general model for energy professionals. 
+<html xmlns="http://www.w3.org/1999/xhtml">
 
-To run the code, you will need `dplyr` and `ggplot2`. The csv file is already provided using sample data. 
+<head>
 
-##1: Load the data in RStudio
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-```{r}
-#--- load packages ---
-library(dplyr)
-library(ggplot2)
+<link href="data:text/css,%0A%0A%40font%2Dface%20%7B%0A%20%20font%2Dfamily%3A%20octicons%2Dlink%3B%0A%20%20src%3A%20url%28data%3Afont%2Fwoff%3Bcharset%3Dutf%2D8%3Bbase64%3Bbase64%2Cd09GRgABAAAAAAZwABAAAAAACFQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABEU0lHAAAGaAAAAAgAAAAIAAAAAUdTVUIAAAZcAAAACgAAAAoAAQAAT1MvMgAAAyQAAABJAAAAYFYEU3RjbWFwAAADcAAAAEUAAACAAJThvmN2dCAAAATkAAAABAAAAAQAAAAAZnBnbQAAA7gAAACyAAABCUM%2B8IhnYXNwAAAGTAAAABAAAAAQABoAI2dseWYAAAFsAAABPAAAAZwcEq9taGVhZAAAAsgAAAA0AAAANgh4a91oaGVhAAADCAAAABoAAAAkCA8DRGhtdHgAAAL8AAAADAAAAAwGAACfbG9jYQAAAsAAAAAIAAAACABiATBtYXhwAAACqAAAABgAAAAgAA8ASm5hbWUAAAToAAABQgAAAlXu73sOcG9zdAAABiwAAAAeAAAAME3QpOBwcmVwAAAEbAAAAHYAAAB%2FaFGpk3jaTY6xa8JAGMW%2FO62BDi0tJLYQincXEypYIiGJjSgHniQ6umTsUEyLm5BV6NDBP8Tpts6F0v%2Bk%2F0an2i%2BitHDw3v2%2B9%2BDBKTzsJNnWJNTgHEy4BgG3EMI9DCEDOGEXzDADU5hBKMIgNPZqoD3SilVaXZCER3%2FI7AtxEJLtzzuZfI%2BVVkprxTlXShWKb3TBecG11rwoNlmmn1P2WYcJczl32etSpKnziC7lQyWe1smVPy%2FLt7Kc%2B0vWY%2FgAgIIEqAN9we0pwKXreiMasxvabDQMM4riO%2BqxM2ogwDGOZTXxwxDiycQIcoYFBLj5K3EIaSctAq2kTYiw%2Bymhce7vwM9jSqO8JyVd5RH9gyTt2%2BJ%2FyUmYlIR0s04n6%2B7Vm1ozezUeLEaUjhaDSuXHwVRgvLJn1tQ7xiuVv%2FocTRF42mNgZGBgYGbwZOBiAAFGJBIMAAizAFoAAABiAGIAznjaY2BkYGAA4in8zwXi%2BW2%2BMjCzMIDApSwvXzC97Z4Ig8N%2FBxYGZgcgl52BCSQKAA3jCV8CAABfAAAAAAQAAEB42mNgZGBg4f3vACQZQABIMjKgAmYAKEgBXgAAeNpjYGY6wTiBgZWBg2kmUxoDA4MPhGZMYzBi1AHygVLYQUCaawqDA4PChxhmh%2F8ODDEsvAwHgMKMIDnGL0x7gJQCAwMAJd4MFwAAAHjaY2BgYGaA4DAGRgYQkAHyGMF8NgYrIM3JIAGVYYDT%2BAEjAwuDFpBmA9KMDEwMCh9i%2Fv8H8sH0%2F4dQc1iAmAkALaUKLgAAAHjaTY9LDsIgEIbtgqHUPpDi3gPoBVyRTmTddOmqTXThEXqrob2gQ1FjwpDvfwCBdmdXC5AVKFu3e5MfNFJ29KTQT48Ob9%2FlqYwOGZxeUelN2U2R6%2BcArgtCJpauW7UQBqnFkUsjAY%2FkOU1cP%2BDAgvxwn1chZDwUbd6CFimGXwzwF6tPbFIcjEl%2BvvmM%2FbyA48e6tWrKArm4ZJlCbdsrxksL1AwWn%2FyBSJKpYbq8AXaaTb8AAHja28jAwOC00ZrBeQNDQOWO%2F%2FsdBBgYGRiYWYAEELEwMTE4uzo5Zzo5b2BxdnFOcALxNjA6b2ByTswC8jYwg0VlNuoCTWAMqNzMzsoK1rEhNqByEyerg5PMJlYuVueETKcd%2F89uBpnpvIEVomeHLoMsAAe1Id4AAAAAAAB42oWQT07CQBTGv0JBhagk7HQzKxca2sJCE1hDt4QF%2B9JOS0nbaaYDCQfwCJ7Au3AHj%2BLO13FMmm6cl7785vven0kBjHCBhfpYuNa5Ph1c0e2Xu3jEvWG7UdPDLZ4N92nOm%2BEBXuAbHmIMSRMs%2B4aUEd4Nd3CHD8NdvOLTsA2GL8M9PODbcL%2BhD7C1xoaHeLJSEao0FEW14ckxC%2BTU8TxvsY6X0eLPmRhry2WVioLpkrbp84LLQPGI7c6sOiUzpWIWS5GzlSgUzzLBSikOPFTOXqly7rqx0Z1Q5BAIoZBSFihQYQOOBEdkCOgXTOHA07HAGjGWiIjaPZNW13%2F%2Blm6S9FT7rLHFJ6fQbkATOG1j2OFMucKJJsxIVfQORl%2B9Jyda6Sl1dUYhSCm1dyClfoeDve4qMYdLEbfqHf3O%2FAdDumsjAAB42mNgYoAAZQYjBmyAGYQZmdhL8zLdDEydARfoAqIAAAABAAMABwAKABMAB%2F%2F%2FAA8AAQAAAAAAAAAAAAAAAAABAAAAAA%3D%3D%29%20format%28%27woff%27%29%3B%0A%7D%0A%0Abody%20%7B%0A%20%20%2Dwebkit%2Dtext%2Dsize%2Dadjust%3A%20100%25%3B%0A%20%20text%2Dsize%2Dadjust%3A%20100%25%3B%0A%20%20color%3A%20%23333%3B%0A%20%20font%2Dfamily%3A%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20%22Segoe%20UI%22%2C%20Arial%2C%20freesans%2C%20sans%2Dserif%2C%20%22Apple%20Color%20Emoji%22%2C%20%22Segoe%20UI%20Emoji%22%2C%20%22Segoe%20UI%20Symbol%22%3B%0A%20%20font%2Dsize%3A%2016px%3B%0A%20%20line%2Dheight%3A%201%2E6%3B%0A%20%20word%2Dwrap%3A%20break%2Dword%3B%0A%7D%0A%0Aa%20%7B%0A%20%20background%2Dcolor%3A%20transparent%3B%0A%7D%0A%0Aa%3Aactive%2C%0Aa%3Ahover%20%7B%0A%20%20outline%3A%200%3B%0A%7D%0A%0Astrong%20%7B%0A%20%20font%2Dweight%3A%20bold%3B%0A%7D%0A%0Ah1%20%7B%0A%20%20font%2Dsize%3A%202em%3B%0A%20%20margin%3A%200%2E67em%200%3B%0A%7D%0A%0Aimg%20%7B%0A%20%20border%3A%200%3B%0A%7D%0A%0Ahr%20%7B%0A%20%20box%2Dsizing%3A%20content%2Dbox%3B%0A%20%20height%3A%200%3B%0A%7D%0A%0Apre%20%7B%0A%20%20overflow%3A%20auto%3B%0A%7D%0A%0Acode%2C%0Akbd%2C%0Apre%20%7B%0A%20%20font%2Dfamily%3A%20monospace%2C%20monospace%3B%0A%20%20font%2Dsize%3A%201em%3B%0A%7D%0A%0Ainput%20%7B%0A%20%20color%3A%20inherit%3B%0A%20%20font%3A%20inherit%3B%0A%20%20margin%3A%200%3B%0A%7D%0A%0Ahtml%20input%5Bdisabled%5D%20%7B%0A%20%20cursor%3A%20default%3B%0A%7D%0A%0Ainput%20%7B%0A%20%20line%2Dheight%3A%20normal%3B%0A%7D%0A%0Ainput%5Btype%3D%22checkbox%22%5D%20%7B%0A%20%20box%2Dsizing%3A%20border%2Dbox%3B%0A%20%20padding%3A%200%3B%0A%7D%0A%0Atable%20%7B%0A%20%20border%2Dcollapse%3A%20collapse%3B%0A%20%20border%2Dspacing%3A%200%3B%0A%7D%0A%0Atd%2C%0Ath%20%7B%0A%20%20padding%3A%200%3B%0A%7D%0A%0A%2A%20%7B%0A%20%20box%2Dsizing%3A%20border%2Dbox%3B%0A%7D%0A%0Ainput%20%7B%0A%20%20font%3A%2013px%20%2F%201%2E4%20Helvetica%2C%20arial%2C%20nimbussansl%2C%20liberationsans%2C%20freesans%2C%20clean%2C%20sans%2Dserif%2C%20%22Apple%20Color%20Emoji%22%2C%20%22Segoe%20UI%20Emoji%22%2C%20%22Segoe%20UI%20Symbol%22%3B%0A%7D%0A%0Aa%20%7B%0A%20%20color%3A%20%234078c0%3B%0A%20%20text%2Ddecoration%3A%20none%3B%0A%7D%0A%0Aa%3Ahover%2C%0Aa%3Aactive%20%7B%0A%20%20text%2Ddecoration%3A%20underline%3B%0A%7D%0A%0Ahr%20%7B%0A%20%20height%3A%200%3B%0A%20%20margin%3A%2015px%200%3B%0A%20%20overflow%3A%20hidden%3B%0A%20%20background%3A%20transparent%3B%0A%20%20border%3A%200%3B%0A%20%20border%2Dbottom%3A%201px%20solid%20%23ddd%3B%0A%7D%0A%0Ahr%3Abefore%20%7B%0A%20%20display%3A%20table%3B%0A%20%20content%3A%20%22%22%3B%0A%7D%0A%0Ahr%3Aafter%20%7B%0A%20%20display%3A%20table%3B%0A%20%20clear%3A%20both%3B%0A%20%20content%3A%20%22%22%3B%0A%7D%0A%0Ah1%2C%0Ah2%2C%0Ah3%2C%0Ah4%2C%0Ah5%2C%0Ah6%20%7B%0A%20%20margin%2Dtop%3A%2015px%3B%0A%20%20margin%2Dbottom%3A%2015px%3B%0A%20%20line%2Dheight%3A%201%2E1%3B%0A%7D%0A%0Ah1%20%7B%0A%20%20font%2Dsize%3A%2030px%3B%0A%7D%0A%0Ah2%20%7B%0A%20%20font%2Dsize%3A%2021px%3B%0A%7D%0A%0Ah3%20%7B%0A%20%20font%2Dsize%3A%2016px%3B%0A%7D%0A%0Ah4%20%7B%0A%20%20font%2Dsize%3A%2014px%3B%0A%7D%0A%0Ah5%20%7B%0A%20%20font%2Dsize%3A%2012px%3B%0A%7D%0A%0Ah6%20%7B%0A%20%20font%2Dsize%3A%2011px%3B%0A%7D%0A%0Ablockquote%20%7B%0A%20%20margin%3A%200%3B%0A%7D%0A%0Aul%2C%0Aol%20%7B%0A%20%20padding%3A%200%3B%0A%20%20margin%2Dtop%3A%200%3B%0A%20%20margin%2Dbottom%3A%200%3B%0A%7D%0A%0Aol%20ol%2C%0Aul%20ol%20%7B%0A%20%20list%2Dstyle%2Dtype%3A%20lower%2Droman%3B%0A%7D%0A%0Aul%20ul%20ol%2C%0Aul%20ol%20ol%2C%0Aol%20ul%20ol%2C%0Aol%20ol%20ol%20%7B%0A%20%20list%2Dstyle%2Dtype%3A%20lower%2Dalpha%3B%0A%7D%0A%0Add%20%7B%0A%20%20margin%2Dleft%3A%200%3B%0A%7D%0A%0Acode%20%7B%0A%20%20font%2Dfamily%3A%20Consolas%2C%20%22Liberation%20Mono%22%2C%20Menlo%2C%20Courier%2C%20monospace%3B%0A%20%20font%2Dsize%3A%2012px%3B%0A%7D%0A%0Apre%20%7B%0A%20%20margin%2Dtop%3A%200%3B%0A%20%20margin%2Dbottom%3A%200%3B%0A%20%20font%3A%2012px%20Consolas%2C%20%22Liberation%20Mono%22%2C%20Menlo%2C%20Courier%2C%20monospace%3B%0A%7D%0A%0A%2Eselect%3A%3A%2Dms%2Dexpand%20%7B%0A%20%20opacity%3A%200%3B%0A%7D%0A%0A%2Eocticon%20%7B%0A%20%20font%3A%20normal%20normal%20normal%2016px%2F1%20octicons%2Dlink%3B%0A%20%20display%3A%20inline%2Dblock%3B%0A%20%20text%2Ddecoration%3A%20none%3B%0A%20%20text%2Drendering%3A%20auto%3B%0A%20%20%2Dwebkit%2Dfont%2Dsmoothing%3A%20antialiased%3B%0A%20%20%2Dmoz%2Dosx%2Dfont%2Dsmoothing%3A%20grayscale%3B%0A%20%20%2Dwebkit%2Duser%2Dselect%3A%20none%3B%0A%20%20%2Dmoz%2Duser%2Dselect%3A%20none%3B%0A%20%20%2Dms%2Duser%2Dselect%3A%20none%3B%0A%20%20user%2Dselect%3A%20none%3B%0A%7D%0A%0A%2Eocticon%2Dlink%3Abefore%20%7B%0A%20%20content%3A%20%27%5Cf05c%27%3B%0A%7D%0A%0A%2Emarkdown%2Dbody%3Abefore%20%7B%0A%20%20display%3A%20table%3B%0A%20%20content%3A%20%22%22%3B%0A%7D%0A%0A%2Emarkdown%2Dbody%3Aafter%20%7B%0A%20%20display%3A%20table%3B%0A%20%20clear%3A%20both%3B%0A%20%20content%3A%20%22%22%3B%0A%7D%0A%0A%2Emarkdown%2Dbody%3E%2A%3Afirst%2Dchild%20%7B%0A%20%20margin%2Dtop%3A%200%20%21important%3B%0A%7D%0A%0A%2Emarkdown%2Dbody%3E%2A%3Alast%2Dchild%20%7B%0A%20%20margin%2Dbottom%3A%200%20%21important%3B%0A%7D%0A%0Aa%3Anot%28%5Bhref%5D%29%20%7B%0A%20%20color%3A%20inherit%3B%0A%20%20text%2Ddecoration%3A%20none%3B%0A%7D%0A%0A%2Eanchor%20%7B%0A%20%20display%3A%20inline%2Dblock%3B%0A%20%20padding%2Dright%3A%202px%3B%0A%20%20margin%2Dleft%3A%20%2D18px%3B%0A%7D%0A%0A%2Eanchor%3Afocus%20%7B%0A%20%20outline%3A%20none%3B%0A%7D%0A%0Ah1%2C%0Ah2%2C%0Ah3%2C%0Ah4%2C%0Ah5%2C%0Ah6%20%7B%0A%20%20margin%2Dtop%3A%201em%3B%0A%20%20margin%2Dbottom%3A%2016px%3B%0A%20%20font%2Dweight%3A%20bold%3B%0A%20%20line%2Dheight%3A%201%2E4%3B%0A%7D%0A%0Ah1%20%2Eocticon%2Dlink%2C%0Ah2%20%2Eocticon%2Dlink%2C%0Ah3%20%2Eocticon%2Dlink%2C%0Ah4%20%2Eocticon%2Dlink%2C%0Ah5%20%2Eocticon%2Dlink%2C%0Ah6%20%2Eocticon%2Dlink%20%7B%0A%20%20color%3A%20%23000%3B%0A%20%20vertical%2Dalign%3A%20middle%3B%0A%20%20visibility%3A%20hidden%3B%0A%7D%0A%0Ah1%3Ahover%20%2Eanchor%2C%0Ah2%3Ahover%20%2Eanchor%2C%0Ah3%3Ahover%20%2Eanchor%2C%0Ah4%3Ahover%20%2Eanchor%2C%0Ah5%3Ahover%20%2Eanchor%2C%0Ah6%3Ahover%20%2Eanchor%20%7B%0A%20%20text%2Ddecoration%3A%20none%3B%0A%7D%0A%0Ah1%3Ahover%20%2Eanchor%20%2Eocticon%2Dlink%2C%0Ah2%3Ahover%20%2Eanchor%20%2Eocticon%2Dlink%2C%0Ah3%3Ahover%20%2Eanchor%20%2Eocticon%2Dlink%2C%0Ah4%3Ahover%20%2Eanchor%20%2Eocticon%2Dlink%2C%0Ah5%3Ahover%20%2Eanchor%20%2Eocticon%2Dlink%2C%0Ah6%3Ahover%20%2Eanchor%20%2Eocticon%2Dlink%20%7B%0A%20%20visibility%3A%20visible%3B%0A%7D%0A%0Ah1%20%7B%0A%20%20padding%2Dbottom%3A%200%2E3em%3B%0A%20%20font%2Dsize%3A%202%2E25em%3B%0A%20%20line%2Dheight%3A%201%2E2%3B%0A%20%20border%2Dbottom%3A%201px%20solid%20%23eee%3B%0A%7D%0A%0Ah1%20%2Eanchor%20%7B%0A%20%20line%2Dheight%3A%201%3B%0A%7D%0A%0Ah2%20%7B%0A%20%20padding%2Dbottom%3A%200%2E3em%3B%0A%20%20font%2Dsize%3A%201%2E75em%3B%0A%20%20line%2Dheight%3A%201%2E225%3B%0A%20%20border%2Dbottom%3A%201px%20solid%20%23eee%3B%0A%7D%0A%0Ah2%20%2Eanchor%20%7B%0A%20%20line%2Dheight%3A%201%3B%0A%7D%0A%0Ah3%20%7B%0A%20%20font%2Dsize%3A%201%2E5em%3B%0A%20%20line%2Dheight%3A%201%2E43%3B%0A%7D%0A%0Ah3%20%2Eanchor%20%7B%0A%20%20line%2Dheight%3A%201%2E2%3B%0A%7D%0A%0Ah4%20%7B%0A%20%20font%2Dsize%3A%201%2E25em%3B%0A%7D%0A%0Ah4%20%2Eanchor%20%7B%0A%20%20line%2Dheight%3A%201%2E2%3B%0A%7D%0A%0Ah5%20%7B%0A%20%20font%2Dsize%3A%201em%3B%0A%7D%0A%0Ah5%20%2Eanchor%20%7B%0A%20%20line%2Dheight%3A%201%2E1%3B%0A%7D%0A%0Ah6%20%7B%0A%20%20font%2Dsize%3A%201em%3B%0A%20%20color%3A%20%23777%3B%0A%7D%0A%0Ah6%20%2Eanchor%20%7B%0A%20%20line%2Dheight%3A%201%2E1%3B%0A%7D%0A%0Ap%2C%0Ablockquote%2C%0Aul%2C%0Aol%2C%0Adl%2C%0Atable%2C%0Apre%20%7B%0A%20%20margin%2Dtop%3A%200%3B%0A%20%20margin%2Dbottom%3A%2016px%3B%0A%7D%0A%0Ahr%20%7B%0A%20%20height%3A%204px%3B%0A%20%20padding%3A%200%3B%0A%20%20margin%3A%2016px%200%3B%0A%20%20background%2Dcolor%3A%20%23e7e7e7%3B%0A%20%20border%3A%200%20none%3B%0A%7D%0A%0Aul%2C%0Aol%20%7B%0A%20%20padding%2Dleft%3A%202em%3B%0A%7D%0A%0Aul%20ul%2C%0Aul%20ol%2C%0Aol%20ol%2C%0Aol%20ul%20%7B%0A%20%20margin%2Dtop%3A%200%3B%0A%20%20margin%2Dbottom%3A%200%3B%0A%7D%0A%0Ali%3Ep%20%7B%0A%20%20margin%2Dtop%3A%2016px%3B%0A%7D%0A%0Adl%20%7B%0A%20%20padding%3A%200%3B%0A%7D%0A%0Adl%20dt%20%7B%0A%20%20padding%3A%200%3B%0A%20%20margin%2Dtop%3A%2016px%3B%0A%20%20font%2Dsize%3A%201em%3B%0A%20%20font%2Dstyle%3A%20italic%3B%0A%20%20font%2Dweight%3A%20bold%3B%0A%7D%0A%0Adl%20dd%20%7B%0A%20%20padding%3A%200%2016px%3B%0A%20%20margin%2Dbottom%3A%2016px%3B%0A%7D%0A%0Ablockquote%20%7B%0A%20%20padding%3A%200%2015px%3B%0A%20%20color%3A%20%23777%3B%0A%20%20border%2Dleft%3A%204px%20solid%20%23ddd%3B%0A%7D%0A%0Ablockquote%3E%3Afirst%2Dchild%20%7B%0A%20%20margin%2Dtop%3A%200%3B%0A%7D%0A%0Ablockquote%3E%3Alast%2Dchild%20%7B%0A%20%20margin%2Dbottom%3A%200%3B%0A%7D%0A%0Atable%20%7B%0A%20%20display%3A%20block%3B%0A%20%20width%3A%20100%25%3B%0A%20%20overflow%3A%20auto%3B%0A%20%20word%2Dbreak%3A%20normal%3B%0A%20%20word%2Dbreak%3A%20keep%2Dall%3B%0A%7D%0A%0Atable%20th%20%7B%0A%20%20font%2Dweight%3A%20bold%3B%0A%7D%0A%0Atable%20th%2C%0Atable%20td%20%7B%0A%20%20padding%3A%206px%2013px%3B%0A%20%20border%3A%201px%20solid%20%23ddd%3B%0A%7D%0A%0Atable%20tr%20%7B%0A%20%20background%2Dcolor%3A%20%23fff%3B%0A%20%20border%2Dtop%3A%201px%20solid%20%23ccc%3B%0A%7D%0A%0Atable%20tr%3Anth%2Dchild%282n%29%20%7B%0A%20%20background%2Dcolor%3A%20%23f8f8f8%3B%0A%7D%0A%0Aimg%20%7B%0A%20%20max%2Dwidth%3A%20100%25%3B%0A%20%20box%2Dsizing%3A%20content%2Dbox%3B%0A%20%20background%2Dcolor%3A%20%23fff%3B%0A%7D%0A%0Acode%20%7B%0A%20%20padding%3A%200%3B%0A%20%20padding%2Dtop%3A%200%2E2em%3B%0A%20%20padding%2Dbottom%3A%200%2E2em%3B%0A%20%20margin%3A%200%3B%0A%20%20font%2Dsize%3A%2085%25%3B%0A%20%20background%2Dcolor%3A%20rgba%280%2C0%2C0%2C0%2E04%29%3B%0A%20%20border%2Dradius%3A%203px%3B%0A%7D%0A%0Acode%3Abefore%2C%0Acode%3Aafter%20%7B%0A%20%20letter%2Dspacing%3A%20%2D0%2E2em%3B%0A%20%20content%3A%20%22%5C00a0%22%3B%0A%7D%0A%0Apre%3Ecode%20%7B%0A%20%20padding%3A%200%3B%0A%20%20margin%3A%200%3B%0A%20%20font%2Dsize%3A%20100%25%3B%0A%20%20word%2Dbreak%3A%20normal%3B%0A%20%20white%2Dspace%3A%20pre%3B%0A%20%20background%3A%20transparent%3B%0A%20%20border%3A%200%3B%0A%7D%0A%0A%2Ehighlight%20%7B%0A%20%20margin%2Dbottom%3A%2016px%3B%0A%7D%0A%0A%2Ehighlight%20pre%2C%0Apre%20%7B%0A%20%20padding%3A%2016px%3B%0A%20%20overflow%3A%20auto%3B%0A%20%20font%2Dsize%3A%2085%25%3B%0A%20%20line%2Dheight%3A%201%2E45%3B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%20%20border%2Dradius%3A%203px%3B%0A%7D%0A%0A%2Ehighlight%20pre%20%7B%0A%20%20margin%2Dbottom%3A%200%3B%0A%20%20word%2Dbreak%3A%20normal%3B%0A%7D%0A%0Apre%20%7B%0A%20%20word%2Dwrap%3A%20normal%3B%0A%7D%0A%0Apre%20code%20%7B%0A%20%20display%3A%20inline%3B%0A%20%20max%2Dwidth%3A%20initial%3B%0A%20%20padding%3A%200%3B%0A%20%20margin%3A%200%3B%0A%20%20overflow%3A%20initial%3B%0A%20%20line%2Dheight%3A%20inherit%3B%0A%20%20word%2Dwrap%3A%20normal%3B%0A%20%20background%2Dcolor%3A%20transparent%3B%0A%20%20border%3A%200%3B%0A%7D%0A%0Apre%20code%3Abefore%2C%0Apre%20code%3Aafter%20%7B%0A%20%20content%3A%20normal%3B%0A%7D%0A%0Akbd%20%7B%0A%20%20display%3A%20inline%2Dblock%3B%0A%20%20padding%3A%203px%205px%3B%0A%20%20font%2Dsize%3A%2011px%3B%0A%20%20line%2Dheight%3A%2010px%3B%0A%20%20color%3A%20%23555%3B%0A%20%20vertical%2Dalign%3A%20middle%3B%0A%20%20background%2Dcolor%3A%20%23fcfcfc%3B%0A%20%20border%3A%20solid%201px%20%23ccc%3B%0A%20%20border%2Dbottom%2Dcolor%3A%20%23bbb%3B%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20box%2Dshadow%3A%20inset%200%20%2D1px%200%20%23bbb%3B%0A%7D%0A%0A%2Epl%2Dc%20%7B%0A%20%20color%3A%20%23969896%3B%0A%7D%0A%0A%2Epl%2Dc1%2C%0A%2Epl%2Ds%20%2Epl%2Dv%20%7B%0A%20%20color%3A%20%230086b3%3B%0A%7D%0A%0A%2Epl%2De%2C%0A%2Epl%2Den%20%7B%0A%20%20color%3A%20%23795da3%3B%0A%7D%0A%0A%2Epl%2Ds%20%2Epl%2Ds1%2C%0A%2Epl%2Dsmi%20%7B%0A%20%20color%3A%20%23333%3B%0A%7D%0A%0A%2Epl%2Dent%20%7B%0A%20%20color%3A%20%2363a35c%3B%0A%7D%0A%0A%2Epl%2Dk%20%7B%0A%20%20color%3A%20%23a71d5d%3B%0A%7D%0A%0A%2Epl%2Dpds%2C%0A%2Epl%2Ds%2C%0A%2Epl%2Ds%20%2Epl%2Dpse%20%2Epl%2Ds1%2C%0A%2Epl%2Dsr%2C%0A%2Epl%2Dsr%20%2Epl%2Dcce%2C%0A%2Epl%2Dsr%20%2Epl%2Dsra%2C%0A%2Epl%2Dsr%20%2Epl%2Dsre%20%7B%0A%20%20color%3A%20%23183691%3B%0A%7D%0A%0A%2Epl%2Dv%20%7B%0A%20%20color%3A%20%23ed6a43%3B%0A%7D%0A%0A%2Epl%2Did%20%7B%0A%20%20color%3A%20%23b52a1d%3B%0A%7D%0A%0A%2Epl%2Dii%20%7B%0A%20%20background%2Dcolor%3A%20%23b52a1d%3B%0A%20%20color%3A%20%23f8f8f8%3B%0A%7D%0A%0A%2Epl%2Dsr%20%2Epl%2Dcce%20%7B%0A%20%20color%3A%20%2363a35c%3B%0A%20%20font%2Dweight%3A%20bold%3B%0A%7D%0A%0A%2Epl%2Dml%20%7B%0A%20%20color%3A%20%23693a17%3B%0A%7D%0A%0A%2Epl%2Dmh%2C%0A%2Epl%2Dmh%20%2Epl%2Den%2C%0A%2Epl%2Dms%20%7B%0A%20%20color%3A%20%231d3e81%3B%0A%20%20font%2Dweight%3A%20bold%3B%0A%7D%0A%0A%2Epl%2Dmq%20%7B%0A%20%20color%3A%20%23008080%3B%0A%7D%0A%0A%2Epl%2Dmi%20%7B%0A%20%20color%3A%20%23333%3B%0A%20%20font%2Dstyle%3A%20italic%3B%0A%7D%0A%0A%2Epl%2Dmb%20%7B%0A%20%20color%3A%20%23333%3B%0A%20%20font%2Dweight%3A%20bold%3B%0A%7D%0A%0A%2Epl%2Dmd%20%7B%0A%20%20background%2Dcolor%3A%20%23ffecec%3B%0A%20%20color%3A%20%23bd2c00%3B%0A%7D%0A%0A%2Epl%2Dmi1%20%7B%0A%20%20background%2Dcolor%3A%20%23eaffea%3B%0A%20%20color%3A%20%2355a532%3B%0A%7D%0A%0A%2Epl%2Dmdr%20%7B%0A%20%20color%3A%20%23795da3%3B%0A%20%20font%2Dweight%3A%20bold%3B%0A%7D%0A%0A%2Epl%2Dmo%20%7B%0A%20%20color%3A%20%231d3e81%3B%0A%7D%0A%0Akbd%20%7B%0A%20%20display%3A%20inline%2Dblock%3B%0A%20%20padding%3A%203px%205px%3B%0A%20%20font%3A%2011px%20Consolas%2C%20%22Liberation%20Mono%22%2C%20Menlo%2C%20Courier%2C%20monospace%3B%0A%20%20line%2Dheight%3A%2010px%3B%0A%20%20color%3A%20%23555%3B%0A%20%20vertical%2Dalign%3A%20middle%3B%0A%20%20background%2Dcolor%3A%20%23fcfcfc%3B%0A%20%20border%3A%20solid%201px%20%23ccc%3B%0A%20%20border%2Dbottom%2Dcolor%3A%20%23bbb%3B%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20box%2Dshadow%3A%20inset%200%20%2D1px%200%20%23bbb%3B%0A%7D%0A%0A%2Etask%2Dlist%2Ditem%20%7B%0A%20%20list%2Dstyle%2Dtype%3A%20none%3B%0A%7D%0A%0A%2Etask%2Dlist%2Ditem%2B%2Etask%2Dlist%2Ditem%20%7B%0A%20%20margin%2Dtop%3A%203px%3B%0A%7D%0A%0A%2Etask%2Dlist%2Ditem%20input%20%7B%0A%20%20margin%3A%200%200%2E35em%200%2E25em%20%2D1%2E6em%3B%0A%20%20vertical%2Dalign%3A%20middle%3B%0A%7D%0A%0A%3Achecked%2B%2Eradio%2Dlabel%20%7B%0A%20%20z%2Dindex%3A%201%3B%0A%20%20position%3A%20relative%3B%0A%20%20border%2Dcolor%3A%20%234078c0%3B%0A%7D%0A%0A%0Acode%20%3E%20%2Ekw%20%7B%20color%3A%20%23000000%3B%20%7D%0Acode%20%3E%20%2Edt%20%7B%20color%3A%20%23ed6a43%3B%20%7D%0Acode%20%3E%20%2Edv%20%7B%20color%3A%20%23009999%3B%20%7D%0Acode%20%3E%20%2Ebn%20%7B%20color%3A%20%23009999%3B%20%7D%0Acode%20%3E%20%2Efl%20%7B%20color%3A%20%23009999%3B%20%7D%0Acode%20%3E%20%2Ech%20%7B%20color%3A%20%23009999%3B%20%7D%0Acode%20%3E%20%2Est%20%7B%20color%3A%20%23183691%3B%20%7D%0Acode%20%3E%20%2Eco%20%7B%20color%3A%20%23969896%3B%20%7D%0Acode%20%3E%20%2Eot%20%7B%20color%3A%20%230086b3%3B%20%7D%0Acode%20%3E%20%2Eal%20%7B%20color%3A%20%23a61717%3B%20%7D%0Acode%20%3E%20%2Efu%20%7B%20color%3A%20%2363a35c%3B%20%20%7D%0Acode%20%3E%20%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%0Acode%20%3E%20%2Ewa%20%7B%20color%3A%20%23000000%3B%20%7D%0Acode%20%3E%20%2Ecn%20%7B%20color%3A%20%23008080%3B%20%20%7D%0Acode%20%3E%20%2Esc%20%7B%20color%3A%20%23008080%3B%20%7D%0Acode%20%3E%20%2Evs%20%7B%20color%3A%20%23183691%3B%20%7D%0Acode%20%3E%20%2Ess%20%7B%20color%3A%20%23183691%3B%20%7D%0Acode%20%3E%20%2Eim%20%7B%20color%3A%20%23000000%3B%20%7D%0Acode%20%3E%20%2Eva%20%7Bcolor%3A%20%23008080%3B%20%7D%0Acode%20%3E%20%2Ecf%20%7B%20color%3A%20%23000000%3B%20%20%7D%0Acode%20%3E%20%2Eop%20%7B%20color%3A%20%23000000%3B%20%7D%0Acode%20%3E%20%2Ebu%20%7B%20color%3A%20%23000000%3B%20%7D%0Acode%20%3E%20%2Eex%20%7B%20color%3A%20%23000000%3B%20%7D%0Acode%20%3E%20%2Epp%20%7B%20color%3A%20%23999999%3B%20%7D%0Acode%20%3E%20%2Eat%20%7B%20color%3A%20%23008080%3B%20%7D%0Acode%20%3E%20%2Edo%20%7B%20color%3A%20%23969896%3B%20%7D%0Acode%20%3E%20%2Ean%20%7B%20color%3A%20%23008080%3B%20%7D%0Acode%20%3E%20%2Ecv%20%7B%20color%3A%20%23008080%3B%20%7D%0Acode%20%3E%20%2Ein%20%7B%20color%3A%20%23008080%3B%20%7D%0A" rel="stylesheet">
+<style>
+body {
+  box-sizing: border-box;
+  min-width: 200px;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 45px;
+  padding-top: 0px;
+}
+</style>
 
-#---- load data, create data frame, and view ---
-df <- read.csv('supplycurve.csv')
-data <- tbl_df(df)
-data %>% View()
-```
+</head>
 
-##2: Check data structures and groupings
-At the very least, you should have data on fuel type (`Fuel`), cumulative capacity (`CumCap`), and bid price (`Price`). Prices should be sorted from least to greatest, and the cumulative capacity should correspond to the prices. 
+<body>
 
-Here, my `Group` column is identical to my `Fuel` column. So I will sort by `Group` to see how many unique fuel types I have to work with. It's also important to understand what data structure the columns are. Using `str(data)`, notice my `CumCap` and `Price` columns are numeric. If not, convert them using the first two optional lines of code below. Use the last optional line of code to get rid of NA values.
-```{r}
-data %>% 
-  select(Group) %>%
-  unique()
+<h1 id="wholesale-market-supply-curve">Wholesale Energy Market Supply Curve</h1>
+<h2 id="introduction">Introduction</h2>
+<p>This document presents a guide for R beginners on how to build a supply curve that one might expect to see in the wholesale energy market. This supply curve is purely hypothetical but can be used to build any supply curve that has a price and quantity pair.</p>
+<p>To run the code, you will need <code>dplyr</code> and <code>ggplot2</code>. The csv file is already provided using sample data.</p>
+<h2 id="load-the-data-in-rstudio">Load the data in RStudio</h2>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co">#--- load packages ---</span>
+<span class="kw">library</span>(dplyr)</code></pre>
+<pre><code>## Warning: package 'dplyr' was built under R version 3.2.5
+## Attaching package: 'dplyr'
+## The following objects are masked from 'package:stats':
+##     filter, lag
+## The following objects are masked from 'package:base':
+##     intersect, setdiff, setequal, union</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggplot2)</code></pre>
+<pre><code>## Warning: package 'ggplot2' was built under R version 3.2.5</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co">#---- load data, create data frame, and view ---</span>
+df &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">'supplycurve.csv'</span>)
+data &lt;-<span class="st"> </span><span class="kw">tbl_df</span>(df)
+data %&gt;%<span class="st"> </span><span class="kw">View</span>()</code></pre>
+<h2 id="check-data-structures-and-groupings">1: Check data structures and groupings</h2>
+<p>At the very least, you should have data on fuel type (<code>Fuel</code>), cumulative capacity (<code>CumCap</code>), and bid price (<code>Price</code>). Prices should be sorted from least to greatest, and the cumulative capacity should correspond to the prices.</p>
+<p>Here, my <code>Group</code> column is identical to my <code>Fuel</code> column. So I will sort by <code>Group</code> to see how many unique fuel types I have to work with. It's also important to understand what data structure the columns are. Using <code>str(data)</code>, notice my <code>CumCap</code> and <code>Price</code> columns are numeric. If not, convert them using the first two optional lines of code below. Use the last optional line of code to get rid of NA values.</p>
+<pre class="sourceCode r"><code class="sourceCode r">data %&gt;%<span class="st"> </span>
+<span class="st">  </span><span class="kw">select</span>(Group) %&gt;%
+<span class="st">  </span><span class="kw">unique</span>()</code></pre>
+<pre><code>## Source: local data frame [8 x 1]
+## 
+##   Group
+##   (int)
+## 1    10
+## 2     2
+## 3    15
+## 4    20
+## 5     5
+## 6    11
+## 7     3
+## 8    NA</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(data)</code></pre>
+<pre><code>## Classes 'tbl_df', 'tbl' and 'data.frame':    463 obs. of  9 variables:
+##  $ Station : int  1 2 3 4 5 6 7 8 9 10 ...
+##  $ Type    : int  11 22 22 22 22 22 22 22 22 22 ...
+##  $ Region  : Factor w/ 11 levels &quot;&quot;,&quot;Zone 1&quot;,&quot;Zone 10&quot;,..: 2 4 5 6 7 8 9 10 11 3 ...
+##  $ Fuel    : Factor w/ 19 levels &quot;&quot;,&quot;1&quot;,&quot;1,001&quot;,..: 6 3 3 3 3 3 3 3 3 3 ...
+##  $ Group   : int  10 10 10 10 10 10 10 10 10 10 ...
+##  $ Class   : Factor w/ 5 levels &quot;&quot;,&quot;Hydro&quot;,&quot;Solar&quot;,..: 2 2 2 2 2 2 2 2 2 2 ...
+##  $ Capacity: int  929 35 42 41 39 28 17 13 20 15 ...
+##  $ CumCap  : int  929 964 1006 1047 1086 1114 1131 1144 1164 1179 ...
+##  $ Price   : int  0 0 0 0 0 0 0 0 0 0 ...</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co">#optional</span>
+<span class="kw">as.numeric</span>(data$Price)</code></pre>
+<pre><code>##   [1]   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+##  [18]   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+##  [35]   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+##  [52]   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+##  [69]   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+##  [86]   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+## [103]   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+## [120]   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+## [137]   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+## [154]   0   0   0   0   0   0   0   0   0   0   3   4   9   9   9  10  15
+## [171]  15  15  15  16  17  18  19  19  19  19  19  20  20  20  20  20  20
+## [188]  21  21  21  21  21  21  21  21  21  21  21  21  21  22  22  22  22
+## [205]  22  22  22  22  22  22  22  22  22  22  22  22  22  22  23  23  23
+## [222]  23  23  23  23  23  23  23  23  23  23  23  23  23  23  23  24  24
+## [239]  24  24  24  24  24  24  24  24  24  24  25  25  26  26  26  27  27
+## [256]  27  27  27  28  28  28  28  28  29  29  29  29  30  30  30  30  30
+## [273]  31  31  31  31  31  33  33  33  33  33  33  33  34  34  34  34  34
+## [290]  34  34  34  34  34  34  35  35  36  39  39  40  40  41  41  41  43
+## [307]  44  45  45  46  46  46  47  47  48  48  48  48  48  48  48  48  49
+## [324]  49  49  49  50  50  50  50  50  51  51  51  52  53  54  54  55  55
+## [341]  55  55  55  55  55  55  55  56  56  56  56  56  56  56  57  57  57
+## [358]  57  57  58  58  58  58  58  58  59  59  59  59  59  59  60  60  61
+## [375]  61  61  62  62  63  63  63  63  65  68  69  72  72  77  77  78  79
+## [392]  81  82  83  91  92  98 106 106 111 113 114 114 114 114 120 120 121
+## [409] 122 123 138 138 139 140 140 141 141 141 141 141 141 143 148 158 158
+## [426] 158 158 158 158 158 165 175 183 189 193 194 194  NA  NA  NA  NA  NA
+## [443]  NA  NA  NA  NA  NA  NA  NA  NA  NA  NA  NA  NA  NA  NA  NA  NA  NA
+## [460]  NA  NA  NA  NA</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">as.numeric</span>(data$CumCap)</code></pre>
+<pre><code>##   [1]   929   964  1006  1047  1086  1114  1131  1144  1164  1179  1194
+##  [12]  1212  1230  1248  1251  1267  1279  1291  1306  1322  1338  1348
+##  [23]  1362  1370  1379  1389  1395  1406  1412  1418  1424  1430  1436
+##  [34]  1441  1447  1452  1455  1459  1465  1471  1475  1479  1484  1490
+##  [45]  1493  1497  1499  1503  1507  1511  1516  1519  1521  1523  1525
+##  [56]  1527  1530  1532  1534  1536  1539  1541  1543  1546  1548  1554
+##  [67]  1566  1572  1575  1634  1665  1691  1717  1736  1760  1783  1803
+##  [78]  1818  1835  1847  1861  1870  1880  1890  1897  1905  1910  1914
+##  [89]  1918  1921  1923  1925  1927  1928  1930  1931  1932  1933  1934
+## [100]  1935  1936  1937  1938  1939  1940  1941  1942  1943  1944  1945
+## [111]  1946  1947  1948  1949  1950  1951  1952  1953  1954  1955  1956
+## [122]  1957  1958  1959  1960  1961  1978  1981  1990  1999  2051  2103
+## [133]  2155  2207  2259  2278  2297  2316  2335  2354  2356  2358  2360
+## [144]  2362  2364  2365  2366  2367  2368  2369  2745  2810  2849  2880
+## [155]  2906  2923  2939  2955  2971  2987  3003  3019  3035  3037  3039
+## [166]  4214  5371  6193  6194  6196  6198  6417  6456  6458  6862  7296
+## [177]  7299  7871  8540  8543  8978  9600 10060 10062 10594 10849 11181
+## [188] 11541 11790 11792 11794 12044 12046 12051 12720 12739 12748 12761
+## [199] 12783 13025 13064 13117 13370 13607 13619 13636 13647 13807 13819
+## [210] 13834 13846 13892 13910 13945 14301 14538 14554 14586 14602 14615
+## [221] 14625 15349 15380 15396 15398 16111 16140 16149 16173 16197 16210
+## [232] 16223 16257 16494 16521 16534 16537 16540 16543 16546 16549 16552
+## [243] 16555 16558 16561 16563 16787 17315 17540 17543 17820 18070 18072
+## [254] 18343 18584 18826 19076 19319 19470 19718 19870 20021 20174 20176
+## [265] 20447 20595 20698 20711 20761 20921 20991 21050 21153 21449 21548
+## [276] 21589 21688 21751 21790 21791 21830 21832 21859 21898 21937 21940
+## [287] 22233 22525 22817 23087 23381 23675 23736 23738 23767 23768 23796
+## [298] 23824 23826 23989 23991 24009 24010 24024 24042 24259 24368 24412
+## [309] 24480 24518 25034 25078 25116 25154 25156 25158 25197 25236 25760
+## [320] 25838 26253 26298 26329 26375 26450 26489 26528 26545 26584 26623
+## [331] 26631 26676 26695 26753 27122 27124 27164 27173 27177 27212 27221
+## [342] 27223 27225 27235 27245 27261 27305 27316 27333 27384 27426 27428
+## [353] 27441 27442 27444 27450 27493 27507 27510 27524 27566 27583 27673
+## [364] 27715 27758 27771 27773 27775 27781 27823 27825 27866 27874 27878
+## [375] 27919 27953 27987 28029 28033 28068 28082 28093 28262 28270 28275
+## [386] 28276 28310 28324 28339 28340 28382 28395 28852 28869 28886 29378
+## [397] 29394 29720 29737 30060 30151 30168 30174 30178 30182 30197 30214
+## [408] 30260 30276 30292 30393 30430 30557 30617 30735 30772 30789 30806
+## [419] 30889 30908 30942 30959 30975 30990 31004 31020 31035 31050 31065
+## [430] 31080 31096 31110 31111 31112 31131 31172 31212    NA    NA    NA
+## [441]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
+## [452]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
+## [463]    NA</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">data &lt;-<span class="st"> </span>data[!(<span class="kw">is.na</span>(data$Group)),]</code></pre>
+<h2 id="create-fuel-categories">2: Create fuel categories</h2>
+<p>If your <code>Fuel</code> column is already characters, great. If they are indexed as numbers as they are in my .csv file, then you need to convert them.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co"># --- convert groups into categories --- </span>
+data$Group[data$Group ==<span class="st"> </span><span class="dv">2</span>] &lt;-<span class="st"> 'Wind'</span>
+data$Group[data$Group ==<span class="st"> </span><span class="dv">3</span>] &lt;-<span class="st"> 'Oil'</span>
+data$Group[data$Group ==<span class="st"> </span><span class="dv">5</span>] &lt;-<span class="st"> 'Natural Gas'</span>
+data$Group[data$Group ==<span class="st"> </span><span class="dv">10</span>] &lt;-<span class="st"> 'Hydro'</span>
+data$Group[data$Group ==<span class="st"> </span><span class="dv">11</span>] &lt;-<span class="st"> 'Biomass'</span>
+data$Group[data$Group ==<span class="st"> </span><span class="dv">15</span>] &lt;-<span class="st"> 'Solar'</span>
+data$Group[data$Group ==<span class="st"> </span><span class="dv">20</span>] &lt;-<span class="st"> 'Nuclear'</span></code></pre>
+<h2 id="plot-using-ggplot2">3: Plot using ggplot2</h2>
+<p>Here, I sorted by supply stack by fuel. I also changed the X and Y axis labels. If you see data points with extreme prices, you can clip it using the optional code below.</p>
+<pre class="sourceCode r"><code class="sourceCode r">supply_curve &lt;-<span class="st"> </span><span class="kw">ggplot</span>(data, <span class="kw">aes</span>(<span class="dt">x =</span> CumCap, <span class="dt">y =</span> Price, <span class="dt">shape =</span> Group, <span class="dt">color =</span> Group))
+supply_curve +<span class="st"> </span><span class="kw">geom_point</span>(<span class="dt">size =</span> <span class="dv">5</span>, <span class="dt">shape =</span> <span class="dv">20</span>) +<span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;Capacity (MW)&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;Price ($/MWh)&quot;</span>)</code></pre>
+<p><img src="data:image/png;base64,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" /></p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="co">#optional: clip extreme values and max price at $200/MWh</span>
+data &lt;-<span class="st"> </span><span class="kw">subset</span>(data, data$Price &lt;<span class="st"> </span><span class="dv">200</span>)</code></pre>
+<h2 id="rinse-and-repeat">3: Rinse and repeat</h2>
 
-str(data)
-
-#optional
-as.numeric(data$Price)
-as.numeric(data$CumCap)
-data <- data[!(is.na(data$Group)),]
-```
-
-##3: Create fuel categories
-If your `Fuel` column is already characters, great. If they are indexed as numbers as they are in my .csv file, then you need to convert them. 
-
-```{r}
-# --- convert groups into categories --- 
-data$Group[data$Group == 2] <- 'Wind'
-data$Group[data$Group == 3] <- 'Oil'
-data$Group[data$Group == 5] <- 'Natural Gas'
-data$Group[data$Group == 10] <- 'Hydro'
-data$Group[data$Group == 11] <- 'Biomass'
-data$Group[data$Group == 15] <- 'Solar'
-data$Group[data$Group == 20] <- 'Nuclear'
-```
-
-##4: Plot using ggplot2
-Here, I sorted by supply stack by fuel. I also changed the X and Y axis labels. If you see data points with extreme prices, you can clip it using the optional code below. 
-
-```{r}
-supply_curve <- ggplot(data, aes(x = CumCap, y = Price, shape = Group, color = Group))
-supply_curve + geom_point(size = 5, shape = 20) +labs(x = "Capacity (MW)", y = "Price ($/MWh)")
-
-#optional: clip extreme values and max price at $200/MWh
-data <- subset(data, data$Price < 200)
-
-
-```
-
-##5: Rinse and repeat
+</body>
+</html>
